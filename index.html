@@ -1,0 +1,437 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Öküz & Keçi 💚</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@500;700;800;900&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: #dcebd0;
+    font-family: 'Nunito', sans-serif;
+    color: #35533d;
+    overflow-x: hidden;
+}
+
+.game {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 35px 15px 25px;
+    background:
+        radial-gradient(#b4d3a6 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+}
+
+h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(16px, 4vw, 27px);
+    text-align: center;
+    color: #446d49;
+    line-height: 1.8;
+    margin: 10px 0;
+}
+
+.subtitle {
+    font-size: 15px;
+    margin-bottom: 35px;
+    text-align: center;
+}
+
+.scene {
+    width: min(700px, 100%);
+    background: #f5f2df;
+    border: 5px solid #69875a;
+    border-radius: 12px;
+    padding: 35px 12px 0;
+    box-shadow: 8px 8px 0 #9bb88c;
+    position: relative;
+}
+
+.characters {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: clamp(20px, 9vw, 85px);
+}
+
+.animal {
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    width: 145px;
+    max-width: 42%;
+    transition: transform .2s;
+}
+
+.animal:hover {
+    transform: translateY(-6px);
+}
+
+.animal:active {
+    transform: scale(.9);
+}
+
+.sprite {
+    font-size: clamp(70px, 15vw, 115px);
+    filter: drop-shadow(4px 5px 0 #d1d0ba);
+    image-rendering: pixelated;
+    display: block;
+    animation: idle 2s infinite ease-in-out;
+}
+
+.animal-name {
+    display: inline-block;
+    background: #d8e7c9;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-weight: 900;
+    margin-top: 10px;
+}
+
+.bubble {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 2px solid #66845a;
+    border-radius: 12px;
+    padding: 10px 12px;
+    width: max-content;
+    max-width: 170px;
+    font-size: 12px;
+    font-weight: 900;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+    margin-bottom: 15px;
+    z-index: 5;
+}
+
+.bubble.show {
+    opacity: 1;
+}
+
+.bubble::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    border: 9px solid transparent;
+    border-top-color: #66845a;
+    transform: translateX(-50%);
+}
+
+.ground {
+    height: 30px;
+    background: #9fbe87;
+    margin: 25px -12px 0;
+    border-top: 5px solid #789d69;
+}
+
+.grass-area {
+    text-align: center;
+    margin: 28px 0 15px;
+}
+
+.grass {
+    cursor: pointer;
+    display: inline-block;
+    font-size: 65px;
+    line-height: 1.4;
+    animation: sway 2s infinite ease-in-out;
+    transition: transform .2s;
+    user-select: none;
+}
+
+.grass:hover {
+    transform: scale(1.2);
+}
+
+.grass:active {
+    transform: scale(.8);
+}
+
+.grass-label {
+    font-size: 12px;
+    font-weight: 900;
+    color: #52764b;
+    margin-top: 5px;
+}
+
+.hint {
+    font-size: 12px;
+    margin: 22px 0 0;
+    text-align: center;
+    color: #6a8260;
+}
+
+.footer {
+    margin-top: 28px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+    color: #69845d;
+}
+
+@keyframes idle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes sway {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+}
+
+/* MEKTUP */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(34, 53, 35, .75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    z-index: 20;
+    overflow-y: auto;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.letter {
+    width: min(520px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff9e9;
+    border: 5px solid #b4a47a;
+    border-radius: 8px;
+    padding: 28px 23px;
+    box-shadow: 8px 8px 0 rgba(0,0,0,.2);
+    animation: appear .4s ease;
+    position: relative;
+}
+
+@keyframes appear {
+    from { opacity: 0; transform: scale(.8) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.letter h2 {
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    line-height: 2;
+    color: #58734b;
+}
+
+.letter-content {
+    white-space: pre-line;
+    font-size: 15px;
+    line-height: 1.9;
+    color: #554d3e;
+    font-weight: 700;
+}
+
+.signature {
+    text-align: right;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 18px;
+    color: #648354;
+    margin-top: 25px;
+}
+
+.close {
+    display: block;
+    margin: 20px auto 0;
+    border: 0;
+    background: #66875b;
+    color: white;
+    font-weight: 900;
+    padding: 12px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.close:hover {
+    background: #496b45;
+}
+
+@media(max-width: 420px) {
+    .game { padding-top: 25px; }
+    .scene { padding-top: 30px; }
+    .letter { padding: 23px 17px; }
+    .letter-content { font-size: 14px; }
+}
+</style>
+</head>
+
+<body>
+
+<main class="game">
+
+    <h1>ÖKÜZ & KEÇİ</h1>
+    <p class="subtitle">İki inatçı, bir küçük dünya... 💚</p>
+
+    <section class="scene">
+
+        <div class="characters">
+
+            <div class="animal" onclick="animalClick('cow')">
+                <div class="bubble" id="cowBubble">MÖÖÖ! 🐂</div>
+                <span class="sprite">🐂</span>
+                <span class="animal-name">Öküz</span>
+            </div>
+
+            <div class="animal" onclick="animalClick('goat')">
+                <div class="bubble" id="goatBubble">MEEEE! 🐐</div>
+                <span class="sprite">🐐</span>
+                <span class="animal-name">Keçi</span>
+            </div>
+
+        </div>
+
+        <div class="ground"></div>
+
+        <div class="grass-area">
+            <div class="grass" onclick="openLetter()" title="Mektubu aç">🌿🍃🌿</div>
+            <div class="grass-label">KÜÇÜK BİR BUKET 💚</div>
+        </div>
+
+        <p class="hint">
+            Öküzle keçiye tıkla, seslerini duy!
+            <br><br>
+            Bukete tıklarsan sürprizin var... 💌
+        </p>
+
+    </section>
+
+    <div class="footer">MADE WITH LOVE ♡</div>
+
+</main>
+
+<!-- MEKTUP PENCERESİ -->
+
+<div class="modal" id="letterModal" onclick="closeOutside(event)">
+
+    <div class="letter">
+
+        <h2>💌 SANA BİR MEKTUP 💌</h2>
+
+        <div class="letter-content">Selamün aleyküm öküz herif! Ben senin başının belası, keçi Hira. 😌
+
+Evet, anlaşamıyoz ama seviyom seni. Seninle kavgamı bile bir şeye değişmem. İyi ki varsınnn! Onca yorgunluğa rağmen hem mental olarak hem fiziksel olarak bana yine de vakit ayırdığın ve ayırmaya çalıştığın için teşekkür ederim sana.
+
+Sana odun diyorum ama senden daha odunum. Değer verdiğimi gösteremiyorum sanırım ama içim gidiyo, bunu bil. Her zaman yanında olmak için dua edicem ve Allah bunun için sana da bana da güç versin.
+
+Yaptığın kasların yerini kiloya bırakman için, ileride bol tavuk pilav ve tatlı yapmayı nasip etsin. KKS KJSJKSJKSJKKSKK! Benden daha fazla kasın olduğu için kıskandım hahh.
+
+Neyseee, çok uzattııımm. Sen üşenirsin şimdi öküz! Seniiii çooook seviyoom. Yıldızlar kadar öptüümm. Görüşürük öküzüümm!</div>
+
+        <div class="signature">- küçük hanım 💚</div>
+
+        <button class="close" onclick="closeLetter()">Mektubu kapat ♡</button>
+
+    </div>
+
+</div>
+
+<script>
+
+function animalClick(animal) {
+
+    const bubble = document.getElementById(
+        animal === 'cow' ? 'cowBubble' : 'goatBubble'
+    );
+
+    bubble.classList.add('show');
+
+    if (animal === 'cow') {
+        bubble.textContent = 'MÖÖÖÖÖ! 🐂';
+        playSound(180, 0.25);
+    } else {
+        bubble.textContent = 'MEEEEEE! 🐐';
+        playSound(350, 0.3);
+    }
+
+    setTimeout(() => {
+        bubble.classList.remove('show');
+    }, 1800);
+}
+
+let audioContext;
+
+function playSound(frequency, duration) {
+    try {
+        audioContext = audioContext || new (
+            window.AudioContext || window.webkitAudioContext
+        )();
+
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(
+            frequency, audioContext.currentTime
+        );
+
+        gain.gain.setValueAtTime(0.12, audioContext.currentTime);
+        gain.gain.exponentialRampToValueAtTime(
+            0.001, audioContext.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + duration);
+
+    } catch (error) {
+        console.log('Ses oynatılamadı:', error);
+    }
+}
+
+function openLetter() {
+    document.getElementById('letterModal').classList.add('open');
+}
+
+function closeLetter() {
+    document.getElementById('letterModal').classList.remove('open');
+}
+
+function closeOutside(event) {
+    if (event.target.id === 'letterModal') {
+        closeLetter();
+    }
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeLetter();
+    }
+});
+
+</script>
+
+</body>
+</html>
